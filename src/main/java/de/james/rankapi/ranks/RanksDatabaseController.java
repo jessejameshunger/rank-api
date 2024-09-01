@@ -8,10 +8,28 @@ import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RanksDatabaseController {
 
     private MongoDB mongoDB = Ranks.getRanks().getMongoDB();
+
+
+    public void setRankToPlayer(String uuid, String rankName) {
+        if(mongoDB.isInRankDatabase(rankName)) {
+            Document filter = new Document("uuid", uuid);
+            Document updateOperation = new Document("$set", new Document("rank", rankName));
+
+            mongoDB.getMongoPlayers().updateOne(filter, updateOperation);
+        }
+    }
+
+    public String getRankFromPlayer(String uuid) {
+        if(mongoDB.isInPlayerDatabase(uuid)) {
+            return String.valueOf(Objects.requireNonNull(mongoDB.getMongoPlayers().find(Filters.eq("uuid", uuid)).first()).getString("rank"));
+        }
+        throw new NullPointerException("player isn't in database");
+    }
 
     public String getRankPrefix(String rank) {
         if(mongoDB.isInRankDatabase(rank))

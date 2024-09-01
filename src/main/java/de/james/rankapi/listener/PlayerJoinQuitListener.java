@@ -1,6 +1,7 @@
 package de.james.rankapi.listener;
 
 import de.james.rankapi.Ranks;
+import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,9 +13,14 @@ public class PlayerJoinQuitListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        String prefix = Ranks.getRanks().getRankController().getPrefixesByPlayerNameTemp(player.getName()) + player.getName();
-        player.setDisplayName(prefix);
-        player.setPlayerListName(prefix);
+        Ranks.getRanks().getTeams().updateScoreboardPrefixToPlayer(player.getName());
+
+        Document document = new Document("uuid", player.getUniqueId().toString())
+                .append("name", player.getName())
+                .append("rank", "admin")
+                        .append("permissions", "rank.*");
+
+        Ranks.getRanks().getMongoDB().getMongoPlayers().insertOne(document);
 
     }
 

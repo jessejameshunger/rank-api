@@ -72,4 +72,8 @@ public class MongoDB {
         return getMongoRank().find(Filters.eq("rankName", rankName)).first() != null;
     }
 
+    public Boolean isInPlayerDatabase(String uuid) {
+        return getMongoPlayers().find(Filters.eq("uuid", uuid)).first() != null;
+    }
+
 }

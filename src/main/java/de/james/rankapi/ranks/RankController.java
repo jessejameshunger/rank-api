@@ -6,15 +6,27 @@ import de.james.rankapi.Ranks;
 import de.james.rankapi.database.MongoDB;
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class RankController {
 
+    public ArrayList<String> allRanks = new ArrayList<>();
     public HashMap<String, String> rankPrefixes = new HashMap<>();
     public HashMap<String, List<String>> rankPermissions = new HashMap<>();
 
     private MongoDB mongoDB = Ranks.getRanks().getMongoDB();
+
+    public void setAllRanks () {
+        try (MongoCursor<Document> cursor = mongoDB.getMongoRank().find().iterator()) {
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                allRanks.add(doc.getString("rankName"));
+                System.out.println("Loaded all ranks with prefixes to Temp.");
+            }
+        }
+    }
 
     public void setAllPrefixesToTemp () {
         try (MongoCursor<Document> cursor = mongoDB.getMongoRank().find().iterator()) {
@@ -53,11 +65,24 @@ public class RankController {
 
     public Boolean hasRankPermission(String rankName, String permission) {
         Document currentPermission = mongoDB.getMongoRank().find(Filters.eq("rankName", rankName)).first();
-        List<String> foundPermissions = currentPermission.getList("permissions", String.class);
 
-        if(foundPermissions.contains(permission))
-            return true;
+        if (currentPermission != null) {
+            Object permissionsObj = currentPermission.get("permissions");
 
+            if (permissionsObj instanceof List<?>) {
+                List<?> foundPermissions = (List<?>) permissionsObj;
+
+                if (foundPermissions.contains(permission)) {
+                    return true;
+                }
+            } else if (permissionsObj instanceof String) {
+                String foundPermission = (String) permissionsObj;
+
+                if (foundPermission.equals(permission)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

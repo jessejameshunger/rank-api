@@ -2,3 +2,5 @@ name: rank-api
 version: '${version}'
 main: de.james.rankapi.Ranks
 api-version: '1.21'
+commands:
+  rank:

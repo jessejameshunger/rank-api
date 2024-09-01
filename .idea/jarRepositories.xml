@@ -26,5 +26,15 @@
       <option name="name" value="sonatype" />
       <option name="url" value="https://oss.sonatype.org/content/groups/public/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="artifactory-maven-resolver" />
+      <option name="name" value="artifactory-maven-resolver" />
+      <option name="url" value="https://riveaxnet.jfrog.io/artifactory/riveax-rank-api-gradle-dev" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://riveaxnet.jfrog.io/ui/native/riveax-rank-api-gradle-dev/" />
+    </remote-repository>
   </component>
 </project>
